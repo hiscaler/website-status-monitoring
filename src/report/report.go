@@ -38,15 +38,26 @@ func (r *Report) Filename() string {
 	ext := ".txt"
 	switch r.formatter {
 	case TxtFormat:
-		ext = ".txt";
+		ext = ".txt"
 
 	case CsvFormat:
 		ext = ".csv"
 
 	default:
-		ext = ".txt";
+		ext = ".txt"
 	}
-	return "./runtime/reports/" + time.Now().Format("20060102150405") + ext
+
+	now := time.Now()
+
+	dir := "./data/reports/" + now.Format("20060102")
+	_, err := os.Stat(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			os.MkdirAll(dir, 0644)
+		}
+	}
+
+	return dir + "/" + now.Format("2006-01-02 15.04.05") + ext
 }
 
 func (r *Report) AddItem(item Item) {
@@ -108,7 +119,6 @@ func (r *CsvReport) Write() error {
 
 	csvWriter := csv.NewWriter(csvFile)
 	defer csvWriter.Flush()
-	fmt.Println("开始写入 CSV 文件")
 	for _, item := range r.items {
 		d := []string{
 			item.Url,
