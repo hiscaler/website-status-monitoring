@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"bufio"
+	"net/http"
 )
 
 var cfg *config.Config
@@ -29,9 +30,21 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
+		url := scanner.Text()
+		accessible := false
+		resp, err := http.Get(url)
+		if err == nil {
+			accessible = true
+			resp.Body.Close()
+		}
+		s := ""
+		if accessible {
+			s = "OK"
+		}
+		log.Println("Checking " + url + " " + s)
 		item := report.Item{
-			Url:        scanner.Text(),
-			Accessible: false,
+			Url:        url,
+			Accessible: accessible,
 		}
 		r.AddItem(item)
 	}
