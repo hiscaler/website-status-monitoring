@@ -1,2 +1,2 @@
-# website-status-monitoring
-网站状态监控
+# 网站状态监控
+监控指定网站是否可正常访问
