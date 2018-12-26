@@ -47,7 +47,7 @@ func main() {
 	r := report.TxtReport{}
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
-	item := make(chan report.Item, 3)
+	item := make(chan report.Item, 10)
 	for scanner.Scan() {
 		url := scanner.Text()
 		if len(url) <= 0 {
