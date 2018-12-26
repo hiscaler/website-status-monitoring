@@ -89,10 +89,11 @@ type TxtReport struct {
 }
 
 func (r *TxtReport) Write() error {
+	log.Println("Start save text report...")
 	rows := []byte{}
-	rows = append(rows, []byte(fmt.Sprintf("%s\t%-40s\t%-20s\t%s\n", "序号", "URL", "时间", "是否可访问"))...)
+	rows = append(rows, []byte(fmt.Sprintf("%s\t%-60s\t%-20s\t%s\n", "序号", "URL", "时间", "是否可访问"))...)
 	for k, v := range r.items {
-		row := fmt.Sprintf("%-4d\t%-40s\t%-20s\t%s\n", k+1, v.Url, v.Datetime, v.Status)
+		row := fmt.Sprintf("%-4d\t%-60s\t%-20s\t%s\n", k+1, v.Url, v.Datetime, v.Status)
 		rows = append(rows, []byte(row)...)
 	}
 	err := ioutil.WriteFile(r.Filename(), rows, 0644)
