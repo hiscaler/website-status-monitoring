@@ -15,10 +15,7 @@ var cfg *config.Config
 var wg sync.WaitGroup
 
 func init() {
-	cfg = &config.Config{
-		Debug:        true,
-		ReportFormat: report.TxtFormat,
-	}
+	cfg = config.NewConfig()
 }
 
 func test(url string, chanItem chan report.Item) {
@@ -51,6 +48,8 @@ func main() {
 		r = &txtR
 	} else if cfg.ReportFormat == report.CsvFormat {
 		r = &csvR
+	} else {
+		log.Fatalln("reportFormat 配置参数错误。")
 	}
 
 	scanner := bufio.NewScanner(file)
