@@ -44,7 +44,15 @@ func main() {
 	}
 	defer file.Close()
 
-	r := report.TxtReport{}
+	var r report.IReport
+	var txtR report.TxtReport
+	var csvR report.CsvReport
+	if cfg.ReportFormat == report.TxtFormat {
+		r = &txtR
+	} else if cfg.ReportFormat == report.CsvFormat {
+		r = &csvR
+	}
+
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	item := make(chan report.Item, 10)
