@@ -7,15 +7,33 @@ import (
 	"os"
 	"bufio"
 	"net/http"
+	"sync"
+	"fmt"
 )
 
 var cfg *config.Config
+var wg sync.WaitGroup
 
 func init() {
 	cfg = &config.Config{
 		Debug:        true,
 		ReportFormat: report.TxtFormat,
 	}
+}
+
+func test(url string, chanItem chan report.Item) {
+	log.Println("Checking " + url)
+	item := report.Item{
+		Url:        url,
+		Accessible: false,
+	}
+	resp, err := http.Get(url)
+	if err == nil {
+		resp.Body.Close()
+		item.Accessible = true
+	}
+
+	chanItem <- item
 }
 
 func main() {
@@ -29,25 +47,26 @@ func main() {
 	r := report.TxtReport{}
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
+	item := make(chan report.Item, 3)
 	for scanner.Scan() {
 		url := scanner.Text()
-		accessible := false
-		resp, err := http.Get(url)
-		if err == nil {
-			accessible = true
-			resp.Body.Close()
+		if len(url) <= 0 {
+			continue
 		}
-		s := ""
-		if accessible {
-			s = "OK"
-		}
-		log.Println("Checking " + url + " " + s)
-		item := report.Item{
-			Url:        url,
-			Accessible: accessible,
-		}
-		r.AddItem(item)
+		wg.Add(1)
+		go test(url, item)
 	}
+	go func(ch chan report.Item, wg *sync.WaitGroup) {
+		for {
+			select {
+			case v := <-ch:
+				fmt.Println("Checked result", v)
+				r.AddItem(v)
+				wg.Done()
+			}
+		}
+	}(item, &wg)
+	wg.Wait()
 
 	if err := r.Write(); err != nil {
 		log.Println("Save fail, " + err.Error())
