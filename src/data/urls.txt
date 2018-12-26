@@ -1,0 +1,7 @@
+http://www.baidu.com
+https://www.bing.com
+https://cn.bing.com
+http://www.sina.com
+http://www.github.com
+https://www.google.com
+http://not-exists.com/a/b/c
