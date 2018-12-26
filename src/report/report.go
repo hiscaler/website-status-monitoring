@@ -16,6 +16,7 @@ const (
 
 type IReport interface {
 	Write() error
+	AddItem(item Item)
 }
 
 type Item struct {
@@ -26,6 +27,7 @@ type Item struct {
 }
 
 type Report struct {
+	IReport
 	formatter string
 	items     []Item
 }
@@ -89,6 +91,7 @@ type TxtReport struct {
 }
 
 func (r *TxtReport) Write() error {
+	r.SetFormatter(TxtFormat)
 	log.Println("Start save text report...")
 	rows := []byte{}
 	rows = append(rows, []byte(fmt.Sprintf("%s\t%-60s\t%-20s\t%s\n", "序号", "URL", "时间", "是否可访问"))...)
@@ -112,6 +115,7 @@ type CsvReport struct {
 }
 
 func (r *CsvReport) Write() error {
+	r.SetFormatter(CsvFormat)
 	csvFile, err := os.Create(r.Filename())
 	if err != nil {
 		return err
