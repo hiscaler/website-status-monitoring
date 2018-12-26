@@ -11,5 +11,5 @@
 你可以将程序加入定时任务来按时检测，每一次检测都将在 data/reports 目录下生成一个以时间为文件名的报表文件。
 
 ## 配置文件说明
-debug: 是否开启调试模式，可选值为 true|false
-reportFormat: 报表输出格式，可选值为 txt|csv
+1. debug: 是否开启调试模式，可选值为 true|false
+2. reportFormat: 报表输出格式，可选值为 txt|csv
