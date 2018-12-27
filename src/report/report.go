@@ -138,6 +138,13 @@ func (r *CsvReport) Write() error {
 
 	csvWriter := csv.NewWriter(csvFile)
 	defer csvWriter.Flush()
+	titles := GetItemTitles()
+	csvWriter.Write([]string{
+		"序号",
+		titles["Url"],
+		titles["Datetime"],
+		titles["Status"],
+	})
 	for _, item := range r.items {
 		d := []string{
 			item.Url,
