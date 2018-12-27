@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"encoding/csv"
+	"reflect"
 )
 
 const (
@@ -20,10 +21,22 @@ type IReport interface {
 }
 
 type Item struct {
-	Url        string `title:"网址"`
-	Datetime   string `title:"时间"`
-	Accessible bool   `title:"状态"`
-	Status     string `title:"状态"`
+	Url        string `网址`
+	Datetime   string `时间`
+	Accessible bool   `状态`
+	Status     string `状态`
+}
+
+func GetItemTitles() map[string]string {
+	titles := map[string]string{}
+	t := reflect.TypeOf(Item{})
+	n := t.NumField()
+	for i := 0; i < n; i++ {
+		f := t.Field(i)
+		titles[f.Name] = string(f.Tag)
+	}
+
+	return titles
 }
 
 type Report struct {
@@ -93,8 +106,9 @@ type TxtReport struct {
 func (r *TxtReport) Write() error {
 	r.SetFormatter(TxtFormat)
 	log.Println("Start save text report...")
+	titles := GetItemTitles()
 	rows := []byte{}
-	rows = append(rows, []byte(fmt.Sprintf("%s\t%-60s\t%-20s\t%s\n", "序号", "URL", "时间", "是否可访问"))...)
+	rows = append(rows, []byte(fmt.Sprintf("%s\t%-60s\t%-20s\t%s\n", "序号", titles["Url"], titles["Datetime"], titles["Status"]))...)
 	for k, v := range r.items {
 		row := fmt.Sprintf("%-4d\t%-60s\t%-20s\t%s\n", k+1, v.Url, v.Datetime, v.Status)
 		rows = append(rows, []byte(row)...)
