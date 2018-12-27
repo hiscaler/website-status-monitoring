@@ -105,7 +105,6 @@ type TxtReport struct {
 
 func (r *TxtReport) Write() error {
 	r.SetFormatter(TxtFormat)
-	log.Println("Start save text report...")
 	titles := GetItemTitles()
 	rows := []byte{}
 	rows = append(rows, []byte(fmt.Sprintf("%s\t%-60s\t%-20s\t%s\n", "序号", titles["Url"], titles["Datetime"], titles["Status"]))...)
@@ -118,8 +117,6 @@ func (r *TxtReport) Write() error {
 		log.Println(err)
 		return err
 	}
-
-	log.Println("TxtReport write success.")
 
 	return nil
 }

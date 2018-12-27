@@ -75,8 +75,11 @@ func main() {
 	}(item, &wg)
 	wg.Wait()
 
+	log.Println("Begin save report.")
 	if err := r.Write(); err != nil {
-		log.Println("Save fail, " + err.Error())
+		log.Println("Report save fail, " + err.Error())
+	} else {
+		log.Println("Report save success.")
 	}
 	log.Println("Done...")
 }
